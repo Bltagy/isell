@@ -1,0 +1,227 @@
+networks:
+  foodapp:
+    driver: bridge
+
+volumes:
+  redis_data:
+  meilisearch_data:
+  vendor_data:        # named volume — keeps Docker-built vendor isolated from host
+
+services:
+
+  # ─── Nginx ───────────────────────────────────────────────
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: foodapp-nginx
+    restart: unless-stopped
+    ports:
+      - "8055:80"
+      - "443:443"
+    environment:
+      - HOST_IP=${HOST_IP:-localhost}
+    volumes:
+      - ./backend:/var/www/html
+      - vendor_data:/var/www/html/vendor
+      - ./storage/app:/var/www/html/storage/app
+      - ./docker/nginx/default.conf.template:/etc/nginx/templates/default.conf.template
+    # nginx:1.25-alpine processes /etc/nginx/templates/*.template via envsubst on startup.
+    # Only $HOST_IP is substituted — all nginx variables ($host, $uri, etc.) are preserved.
+    command: >
+      /bin/sh -c "envsubst '$$HOST_IP' < /etc/nginx/templates/default.conf.template
+      > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+    depends_on:
+      - laravel-app
+    networks:
+      - foodapp
+
+  # ─── Laravel App (PHP-FPM) ────────────────────────────────
+  laravel-app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: foodapp-app
+    restart: unless-stopped
+    environment:
+      - APP_ENV=${APP_ENV:-local}
+      - TENANCY_CENTRAL_DOMAINS=localhost,${HOST_IP:-localhost}
+    volumes:
+      - ./backend:/var/www/html
+      - vendor_data:/var/www/html/vendor
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
+      - ./storage/app:/var/www/html/storage/app        # uploads outside Docker
+    depends_on:
+      mysql8:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      meilisearch:
+        condition: service_started
+      minio:
+        condition: service_started
+    networks:
+      - foodapp
+
+  # ─── Laravel Horizon (Queue Worker) ──────────────────────
+  laravel-horizon:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: foodapp-horizon
+    restart: unless-stopped
+    command: php artisan horizon
+    environment:
+      - TENANCY_CENTRAL_DOMAINS=localhost,${HOST_IP:-localhost}
+    volumes:
+      - ./backend:/var/www/html
+      - vendor_data:/var/www/html/vendor
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
+      - ./storage/app:/var/www/html/storage/app
+    depends_on:
+      mysql8:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - foodapp
+
+  # ─── Laravel Reverb (WebSocket Server) ───────────────────
+  laravel-reverb:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: foodapp-reverb
+    restart: unless-stopped
+    command: php artisan reverb:start --host=0.0.0.0 --port=8080
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/var/www/html
+      - vendor_data:/var/www/html/vendor
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
+      - ./storage/app:/var/www/html/storage/app
+    depends_on:
+      mysql8:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - foodapp
+
+  # ─── MySQL 8 ─────────────────────────────────────────────
+  mysql8:
+    image: mysql:8.0
+    container_name: foodapp-mysql
+    restart: unless-stopped
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${DB_DATABASE:-foodapp_central}
+      MYSQL_USER: ${DB_USERNAME:-foodapp}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - ./storage/mysql:/var/lib/mysql          # DB data outside Docker
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-rootpassword}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - foodapp
+
+  # ─── Redis ───────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: foodapp-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - foodapp
+
+  # ─── Meilisearch ─────────────────────────────────────────
+  meilisearch:
+    image: getmeili/meilisearch:v1.6
+    container_name: foodapp-meilisearch
+    restart: unless-stopped
+    ports:
+      - "7700:7700"
+    environment:
+      MEILI_MASTER_KEY: ${MEILISEARCH_KEY:-masterkey}
+      MEILI_ENV: development
+    volumes:
+      - meilisearch_data:/meili_data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7700/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - foodapp
+
+  # ─── MinIO (S3-compatible) ────────────────────────────────
+  minio:
+    image: minio/minio:latest
+    container_name: foodapp-minio
+    restart: unless-stopped
+    ports:
+      - "9002:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+    volumes:
+      - ./storage/minio:/data                   # MinIO objects outside Docker
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - foodapp
+
+  # ─── Mailpit (Dev Mail) ───────────────────────────────────
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: foodapp-mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - foodapp
+
+  # ─── Next.js Admin Dashboard ─────────────────────────────
+  nextjs-app:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    container_name: foodapp-dashboard
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://${HOST_IP:-localhost}:8055
+      - NEXT_PUBLIC_REVERB_APP_KEY=foodapp-key
+      - NEXT_PUBLIC_REVERB_HOST=${HOST_IP:-localhost}
+      - NEXT_PUBLIC_REVERB_PORT=8080
+    depends_on:
+      - nginx
+    networks:
+      - foodapp
+

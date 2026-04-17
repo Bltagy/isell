@@ -1,0 +1,58 @@
+# Flutter/Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+*.iml
+
+# Android
+android/.gradle/
+android/local.properties
+android/key.properties
+android/app/google-services.json
+android/app/debug.keystore
+android/app/release.keystore
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Runner/GeneratedPluginRegistrant.*
+ios/Runner/GoogleService-Info.plist
+ios/firebase_app_id_file.json
+
+# macOS
+macos/Pods/
+macos/.symlinks/
+macos/Flutter/GeneratedPluginRegistrant.swift
+macos/Flutter/ephemeral/
+
+# Generated files
+lib/l10n/app_localizations.dart
+lib/l10n/app_localizations_ar.dart
+lib/l10n/app_localizations_en.dart
+*.g.dart
+*.freezed.dart
+
+# Environment / secrets
+.env
+google-services.json
+GoogleService-Info.plist
+firebase-credentials.json
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# macOS
+.DS_Store
+
+# Coverage
+coverage/

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>توثيق نظام طلبات الطعام</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; background: #f7f8fc; color: #2d3748; direction: rtl; }
+  :root { --primary: #FF6B35; --primary-dark: #e55a24; --sidebar: #1A202C; --white: #fff; --gray-100: #f7fafc; --gray-200: #edf2f7; --gray-300: #e2e8f0; --gray-500: #a0aec0; --gray-700: #4a5568; --success: #48bb78; --warning: #ed8936; --danger: #fc8181; --info: #63b3ed; }
+
+  /* NAV */
+  .doc-nav { background: var(--sidebar); color: #fff; padding: 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+  .doc-nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; max-width: 1400px; margin: 0 auto; }
+  .doc-nav-logo { display: flex; align-items: center; gap: 10px; padding: 1rem 0; font-size: 1.3rem; font-weight: 700; color: var(--primary); }
+  .doc-nav-links { display: flex; gap: 0; overflow-x: auto; }
+  .doc-nav-links a { color: #a0aec0; text-decoration: none; padding: 1.2rem 0.9rem; font-size: 0.82rem; white-space: nowrap; transition: color 0.2s, border-bottom 0.2s; border-bottom: 3px solid transparent; }
+  .doc-nav-links a:hover { color: var(--primary); border-bottom-color: var(--primary); }
+
+  /* HERO */
+  .hero { background: linear-gradient(135deg, #1A202C 0%, #2d3748 50%, #FF6B35 100%); color: #fff; padding: 5rem 2rem; text-align: center; }
+  .hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; }
+  .hero p { font-size: 1.2rem; opacity: 0.85; max-width: 700px; margin: 0 auto 2rem; }
+  .hero-badges { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .hero-badge { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 50px; padding: 0.4rem 1.2rem; font-size: 0.9rem; }
+
+  /* SECTIONS */
+  .section { max-width: 1300px; margin: 0 auto; padding: 3rem 2rem; }
+  .section-title { font-size: 1.8rem; font-weight: 700; color: var(--sidebar); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+  .section-title::after { content: ''; flex: 1; height: 2px; background: linear-gradient(to left, transparent, var(--primary)); margin-right: 1rem; }
+  .section-subtitle { color: var(--gray-700); margin-bottom: 2rem; font-size: 1rem; }
+  .section-divider { border: none; border-top: 2px solid var(--gray-200); margin: 3rem 0; }
+
+  /* CARDS */
+  .card { background: var(--white); border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); padding: 1.5rem; }
+  .card-grid { display: grid; gap: 1.5rem; }
+  .card-grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .card-grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .card-grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+  /* STAT CARDS */
+  .stat-card { background: var(--white); border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.07); display: flex; align-items: center; gap: 1rem; border-right: 4px solid var(--primary); }
+  .stat-icon { width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+  .stat-info h3 { font-size: 1.6rem; font-weight: 700; color: var(--sidebar); }
+  .stat-info p { font-size: 0.85rem; color: var(--gray-500); }
+
+  /* BADGES */
+  .badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.78rem; font-weight: 600; }
+  .badge-success { background: #c6f6d5; color: #276749; }
+  .badge-warning { background: #fefcbf; color: #744210; }
+  .badge-danger { background: #fed7d7; color: #742a2a; }
+  .badge-info { background: #bee3f8; color: #2a4365; }
+  .badge-gray { background: #e2e8f0; color: #4a5568; }
+  .badge-orange { background: #feebc8; color: #7b341e; }
+  .badge-purple { background: #e9d8fd; color: #44337a; }
+
+  /* TABLES */
+  .table-wrap { overflow-x: auto; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+  table { width: 100%; border-collapse: collapse; background: var(--white); }
+  thead { background: var(--sidebar); color: #fff; }
+  th { padding: 0.9rem 1rem; text-align: right; font-size: 0.85rem; font-weight: 600; }
+  td { padding: 0.85rem 1rem; border-bottom: 1px solid var(--gray-200); font-size: 0.88rem; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--gray-100); }
+
+  /* BUTTONS */
+  .btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1.2rem; border-radius: 8px; font-size: 0.88rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+  .btn-success { background: var(--success); color: #fff; }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-gray { background: var(--gray-200); color: var(--gray-700); }
+  .btn-sm { padding: 0.3rem 0.8rem; font-size: 0.8rem; }
+
+  /* FORMS */
+  .form-group { margin-bottom: 1.2rem; }
+  .form-label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--gray-700); margin-bottom: 0.4rem; }
+  .form-control { width: 100%; padding: 0.6rem 0.9rem; border: 1.5px solid var(--gray-300); border-radius: 8px; font-size: 0.88rem; background: var(--white); color: var(--sidebar); }
+  .form-control:focus { outline: none; border-color: var(--primary); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+
+  /* DESKTOP MOCKUP */
+  .desktop-mockup { background: #e2e8f0; border-radius: 16px; padding: 12px; box-shadow: 0 8px 40px rgba(0,0,0,0.18); }
+  .browser-bar { background: #f1f5f9; border-radius: 8px 8px 0 0; padding: 8px 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #cbd5e0; }
+  .browser-dots { display: flex; gap: 5px; }
+  .browser-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .browser-dot-red { background: #fc8181; }
+  .browser-dot-yellow { background: #f6e05e; }
+  .browser-dot-green { background: #68d391; }
+  .browser-url { flex: 1; background: #fff; border-radius: 4px; padding: 3px 10px; font-size: 0.75rem; color: #718096; text-align: left; direction: ltr; }
+  .browser-content { background: #f7f8fc; border-radius: 0 0 8px 8px; overflow: hidden; }
+
+  /* ADMIN LAYOUT */
+  .admin-layout { display: flex; min-height: 500px; }
+  .admin-sidebar { width: 200px; background: var(--sidebar); color: #fff; flex-shrink: 0; padding: 1rem 0; }
+  .admin-sidebar-logo { padding: 0.5rem 1rem 1rem; font-size: 1rem; font-weight: 700; color: var(--primary); border-bottom: 1px solid #2d3748; margin-bottom: 0.5rem; }
+  .sidebar-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1rem; font-size: 0.8rem; color: #a0aec0; cursor: pointer; transition: all 0.2s; }
+  .sidebar-item:hover, .sidebar-item.active { background: rgba(255,107,53,0.15); color: var(--primary); border-right: 3px solid var(--primary); }
+  .admin-main { flex: 1; padding: 1.2rem; overflow: hidden; }
+  .admin-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .admin-topbar h2 { font-size: 1.1rem; font-weight: 700; color: var(--sidebar); }
+
+  /* PHONE MOCKUP */
+  .phone-grid { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; }
+  .phone-wrap { display: flex; flex-direction: column; align-items: center; gap: 0.8rem; }
+  .phone-label { font-size: 0.85rem; font-weight: 600; color: var(--gray-700); text-align: center; }
+  .phone-frame { width: 200px; background: #1a1a2e; border-radius: 32px; padding: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.35); border: 2px solid #2d2d44; position: relative; }
+  .phone-notch { width: 60px; height: 18px; background: #1a1a2e; border-radius: 0 0 12px 12px; margin: 0 auto 6px; }
+  .phone-screen { background: #fff; border-radius: 22px; overflow: hidden; min-height: 360px; }
+  .phone-status-bar { background: var(--primary); color: #fff; padding: 4px 12px; display: flex; justify-content: space-between; font-size: 0.6rem; }
+  .phone-home-btn { width: 40px; height: 4px; background: #444; border-radius: 2px; margin: 6px auto 0; }
+
+  /* TIMELINE */
+  .timeline { position: relative; padding-right: 2rem; }
+  .timeline::before { content: ''; position: absolute; right: 8px; top: 0; bottom: 0; width: 2px; background: var(--gray-300); }
+  .timeline-item { position: relative; margin-bottom: 1.5rem; }
+  .timeline-dot { position: absolute; right: -2rem; top: 4px; width: 16px; height: 16px; border-radius: 50%; background: var(--primary); border: 3px solid #fff; box-shadow: 0 0 0 2px var(--primary); }
+  .timeline-dot.done { background: var(--success); box-shadow: 0 0 0 2px var(--success); }
+  .timeline-dot.pending { background: var(--gray-300); box-shadow: 0 0 0 2px var(--gray-300); }
+  .timeline-content h4 { font-size: 0.9rem; font-weight: 600; color: var(--sidebar); }
+  .timeline-content p { font-size: 0.8rem; color: var(--gray-500); }
+
+  /* STATUS FLOW */
+  .status-flow { display: flex; align-items: center; gap: 0; flex-wrap: wrap; margin: 1.5rem 0; }
+  .status-step { display: flex; align-items: center; }
+  .status-bubble { background: var(--gray-200); color: var(--gray-700); padding: 0.4rem 0.9rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600; white-space: nowrap; }
+  .status-bubble.active { background: var(--primary); color: #fff; }
+  .status-bubble.done { background: var(--success); color: #fff; }
+  .status-arrow { color: var(--gray-500); margin: 0 0.3rem; font-size: 0.9rem; }
+
+  /* CHART */
+  .chart-container { background: var(--white); border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+  .chart-title { font-size: 1rem; font-weight: 700; color: var(--sidebar); margin-bottom: 1rem; }
+  .bar-chart { display: flex; align-items: flex-end; gap: 4px; height: 120px; padding-bottom: 20px; position: relative; border-bottom: 2px solid var(--gray-300); }
+  .bar { flex: 1; background: linear-gradient(to top, var(--primary), #ff9a6c); border-radius: 4px 4px 0 0; min-width: 8px; transition: opacity 0.2s; position: relative; }
+  .bar:hover { opacity: 0.8; }
+  .chart-labels { display: flex; gap: 4px; margin-top: 4px; }
+  .chart-label { flex: 1; text-align: center; font-size: 0.55rem; color: var(--gray-500); }
+
+  /* USER STORIES */
+  .story-card { background: var(--white); border-radius: 10px; padding: 1rem 1.2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-right: 4px solid var(--primary); margin-bottom: 0.8rem; }
+  .story-card p { font-size: 0.9rem; color: var(--gray-700); line-height: 1.6; }
+  .story-role { font-size: 0.75rem; font-weight: 700; color: var(--primary); margin-bottom: 0.3rem; }
+
+  /* FLOW DIAGRAM */
+  .flow-diagram { display: flex; flex-direction: column; gap: 0; align-items: center; }
+  .flow-node { background: var(--white); border: 2px solid var(--primary); border-radius: 10px; padding: 0.7rem 1.5rem; font-size: 0.85rem; font-weight: 600; color: var(--sidebar); text-align: center; min-width: 220px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .flow-node.event { background: #fff7ed; border-color: var(--warning); color: #7b341e; }
+  .flow-node.notify { background: #ebf8ff; border-color: var(--info); color: #2a4365; }
+  .flow-node.driver { background: #f0fff4; border-color: var(--success); color: #276749; }
+  .flow-arrow { font-size: 1.4rem; color: var(--gray-500); margin: 0.3rem 0; }
+  .flow-row { display: flex; gap: 1rem; align-items: center; justify-content: center; }
+  .flow-branch { display: flex; gap: 2rem; align-items: flex-start; justify-content: center; }
+
+  /* ROLES */
+  .roles-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; }
+  .role-card { background: var(--white); border-radius: 12px; padding: 1.5rem 1rem; text-align: center; box-shadow: 0 2px 12px rgba(0,0,0,0.07); border-top: 4px solid var(--primary); }
+  .role-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+  .role-name { font-size: 0.95rem; font-weight: 700; color: var(--sidebar); margin-bottom: 0.3rem; }
+  .role-desc { font-size: 0.78rem; color: var(--gray-500); }
+
+  /* MISC */
+  .tag { display: inline-block; background: var(--gray-200); color: var(--gray-700); padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; margin: 2px; }
+  .img-placeholder { background: linear-gradient(135deg, #e2e8f0, #cbd5e0); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--gray-500); font-size: 0.8rem; }
+  .toggle { display: inline-flex; align-items: center; gap: 0.5rem; }
+  .toggle-switch { width: 36px; height: 20px; background: var(--success); border-radius: 10px; position: relative; cursor: pointer; }
+  .toggle-switch::after { content: ''; position: absolute; width: 14px; height: 14px; background: #fff; border-radius: 50%; top: 3px; left: 3px; }
+  .toggle-switch.off { background: var(--gray-300); }
+  .toggle-switch.off::after { left: 19px; }
+  .info-box { background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 8px; padding: 1rem 1.2rem; margin: 1rem 0; font-size: 0.88rem; color: #2a4365; }
+  .warning-box { background: #fffbeb; border: 1px solid #fbd38d; border-radius: 8px; padding: 1rem 1.2rem; margin: 1rem 0; font-size: 0.88rem; color: #744210; }
+
+  @media (max-width: 900px) {
+    .card-grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .card-grid-3 { grid-template-columns: repeat(2, 1fr); }
+    .roles-grid { grid-template-columns: repeat(2, 1fr); }
+    .form-row { grid-template-columns: 1fr; }
+    .form-row-3 { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .card-grid-2 { grid-template-columns: 1fr; }
+    .card-grid-3 { grid-template-columns: 1fr; }
+    .card-grid-4 { grid-template-columns: 1fr; }
+    .roles-grid { grid-template-columns: 1fr 1fr; }
+    .hero h1 { font-size: 2rem; }
+    .admin-sidebar { width: 150px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="doc-nav">
+  <div class="doc-nav-inner">
+    <div class="doc-nav-logo">🍔 نظام طلبات الطعام</div>
+    <div class="doc-nav-links">
+      <a href="#overview">نظرة عامة</a>
+      <a href="#admin">لوحة التحكم</a>
+      <a href="#orders">الطلبات</a>
+      <a href="#products">المنتجات</a>
+      <a href="#customers">العملاء</a>
+      <a href="#drivers">السائقون</a>
+      <a href="#offers">العروض</a>
+      <a href="#banners">البانرات</a>
+      <a href="#settings">الإعدادات</a>
+      <a href="#notifications">الإشعارات</a>
+      <a href="#reports">التقارير</a>
+      <a href="#superadmin">السوبر أدمن</a>
+      <a href="#mobile-customer">تطبيق العميل</a>
+      <a href="#mobile-driver">تطبيق السائق</a>
+      <a href="#stories">قصص المستخدمين</a>
+      <a href="#lifecycle">دورة حياة الطلب</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div style="font-size:4rem;margin-bottom:1rem;">🍔</div>
+  <h1>نظام طلبات الطعام</h1>
+  <p>منصة SaaS متعددة المستأجرين لإدارة طلبات الطعام — توثيق شامل للنظام بجميع مكوناته ووظائفه</p>
+  <div class="hero-badges">
+    <span class="hero-badge">🏗️ Laravel Backend</span>
+    <span class="hero-badge">📱 تطبيق جوال</span>
+    <span class="hero-badge">🌐 Multi-Tenant SaaS</span>
+    <span class="hero-badge">🔔 إشعارات فورية</span>
+    <span class="hero-badge">💳 Kashier Payment</span>
+    <span class="hero-badge">🚗 تتبع السائقين</span>
+  </div>
+</div>
+
+<!-- ===== SECTION 0: OVERVIEW ===== -->
+<div id="overview" class="section">
+  <div class="section-title">🌐 نظرة عامة على النظام</div>
+  <p class="section-subtitle">مقدمة شاملة عن بنية النظام وأدواره الرئيسية</p>
+
+  <div class="card" style="margin-bottom:2rem;">
+    <div style="display:flex;gap:2rem;flex-wrap:wrap;align-items:flex-start;">
+      <div style="flex:1;min-width:280px;">
+        <h3 style="color:var(--primary);font-size:1.2rem;margin-bottom:1rem;">🍔 ما هو النظام؟</h3>
+        <p style="line-height:1.8;color:var(--gray-700);font-size:0.95rem;">
+          <strong>نظام طلبات الطعام</strong> هو منصة SaaS متعددة المستأجرين (Multi-Tenant) مبنية بـ Laravel، تتيح لأصحاب المطاعم والمتاجر إنشاء متجرهم الخاص بنطاق فرعي مستقل (Subdomain)، وإدارة منتجاتهم وطلباتهم وعملائهم وسائقيهم من لوحة تحكم واحدة متكاملة.
+        </p>
+        <br>
+        <p style="line-height:1.8;color:var(--gray-700);font-size:0.95rem;">
+          يدعم النظام تطبيق جوال للعملاء لتصفح المنتجات وتقديم الطلبات وتتبعها، وتطبيقاً مستقلاً للسائقين لاستلام الطلبات وتحديث حالتها.
+        </p>
+      </div>
+      <div style="flex:1;min-width:280px;">
+        <h3 style="color:var(--primary);font-size:1.2rem;margin-bottom:1rem;">⚙️ التقنيات المستخدمة</h3>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+          <span class="tag">Laravel 11</span>
+          <span class="tag">Tenancy for Laravel</span>
+          <span class="tag">Laravel Sanctum</span>
+          <span class="tag">Laravel Horizon</span>
+          <span class="tag">Spatie Permissions</span>
+          <span class="tag">Firebase FCM</span>
+          <span class="tag">WebSockets</span>
+          <span class="tag">Kashier Payment</span>
+          <span class="tag">MySQL</span>
+          <span class="tag">Redis</span>
+          <span class="tag">Laravel Scout</span>
+          <span class="tag">REST API</span>
+        </div>
+        <br>
+        <h3 style="color:var(--primary);font-size:1.2rem;margin-bottom:0.8rem;">🌐 بنية النطاقات</h3>
+        <div style="background:var(--gray-100);border-radius:8px;padding:1rem;font-size:0.85rem;direction:ltr;text-align:left;">
+          <div style="color:#e55a24;font-weight:700;">app.foodorder.com</div>
+          <div style="color:#718096;margin-right:1rem;">↳ السوبر أدمن (Central)</div>
+          <div style="color:#e55a24;font-weight:700;margin-top:0.5rem;">burger-king.foodorder.com</div>
+          <div style="color:#718096;margin-right:1rem;">↳ متجر برجر كينج (Tenant)</div>
+          <div style="color:#e55a24;font-weight:700;margin-top:0.5rem;">pizza-hut.foodorder.com</div>
+          <div style="color:#718096;margin-right:1rem;">↳ متجر بيتزا هت (Tenant)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROLES -->
+  <h3 style="font-size:1.2rem;font-weight:700;color:var(--sidebar);margin-bottom:1rem;">👥 أدوار المستخدمين</h3>
+  <div class="roles-grid">
+    <div class="role-card" style="border-top-color:#9f7aea;">
+      <div class="role-icon">👑</div>
+      <div class="role-name">سوبر أدمن</div>
+      <div class="role-desc">يدير جميع المتاجر والاشتراكات والخطط على مستوى المنصة</div>
+    </div>
+    <div class="role-card" style="border-top-color:var(--primary);">
+      <div class="role-icon">🏪</div>
+      <div class="role-name">مدير المتجر</div>
+      <div class="role-desc">يدير متجره الخاص: المنتجات، الطلبات، العملاء، السائقين، الإعدادات</div>
+    </div>
+    <div class="role-card" style="border-top-color:var(--info);">
+      <div class="role-icon">🏢</div>
+      <div class="role-name">مدير الفرع</div>
+      <div class="role-desc">يدير فرعاً محدداً ويتابع طلباته وموظفيه</div>
+    </div>
+    <div class="role-card" style="border-top-color:var(--success);">
+      <div class="role-icon">🚗</div>
+      <div class="role-name">سائق</div>
+      <div class="role-desc">يستلم الطلبات المسندة إليه ويحدث حالة التوصيل</div>
+    </div>
+    <div class="role-card" style="border-top-color:var(--warning);">
+      <div class="role-icon">👤</div>
+      <div class="role-name">عميل</div>
+      <div class="role-desc">يتصفح المنتجات ويضع الطلبات ويتابع التوصيل</div>
+    </div>
+  </div>
+
+  <div class="info-box" style="margin-top:2rem;">
+    💡 <strong>ملاحظة:</strong> كل متجر (Tenant) يعمل على قاعدة بيانات مستقلة تماماً، مما يضمن عزل البيانات الكامل بين المتاجر المختلفة.
+  </div>
+</div>
+
+<hr class="section-divider">

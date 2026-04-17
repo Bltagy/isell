@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <circle cx="60" cy="60" r="56" fill="#FF6B35"/>
+  <circle cx="60" cy="60" r="44" fill="white" fill-opacity="0.15"/>
+  <!-- Fork -->
+  <line x1="44" y1="32" x2="44" y2="88" stroke="white" stroke-width="4" stroke-linecap="round"/>
+  <path d="M36 32 Q36 52 44 56 Q52 52 52 32" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Knife -->
+  <line x1="72" y1="32" x2="72" y2="88" stroke="white" stroke-width="4" stroke-linecap="round"/>
+  <path d="M68 32 L68 52 Q68 58 72 58 Q76 58 76 52 L76 32" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

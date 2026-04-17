@@ -1,0 +1,1170 @@
+{
+  "info": {
+    "_postman_id": "saas-food-ordering-api",
+    "name": "SaaS Food Ordering API",
+    "description": "Complete API collection for the SaaS multi-tenant food ordering platform.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://demo.localhost/api/v1" },
+    { "key": "central_url", "value": "http://localhost/central/api" },
+    { "key": "token", "value": "" },
+    { "key": "tenant_subdomain", "value": "demo" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/register", "host": ["{{base_url}}"], "path": ["auth", "register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"phone\": \"+201001234567\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}"
+            },
+            "description": "Register a new customer account."
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+201001234567\",\n  \"password\": \"password123\"\n}"
+            },
+            "description": "Login with phone and password. Returns a Bearer token."
+          }
+        },
+        {
+          "name": "Send OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/send-otp", "host": ["{{base_url}}"], "path": ["auth", "send-otp"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+201001234567\"\n}"
+            },
+            "description": "Send an OTP to the given phone number."
+          }
+        },
+        {
+          "name": "Resend OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/resend-otp", "host": ["{{base_url}}"], "path": ["auth", "resend-otp"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+201001234567\"\n}"
+            },
+            "description": "Resend OTP to the given phone number."
+          }
+        },
+        {
+          "name": "Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/verify-otp", "host": ["{{base_url}}"], "path": ["auth", "verify-otp"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+201001234567\",\n  \"otp\": \"123456\"\n}"
+            },
+            "description": "Verify OTP code for phone verification or login."
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/forgot-password", "host": ["{{base_url}}"], "path": ["auth", "forgot-password"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+201001234567\"\n}"
+            },
+            "description": "Initiate password reset by sending OTP to phone."
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/reset-password", "host": ["{{base_url}}"], "path": ["auth", "reset-password"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+201001234567\",\n  \"otp\": \"123456\",\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}"
+            },
+            "description": "Reset password using OTP."
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/auth/logout", "host": ["{{base_url}}"], "path": ["auth", "logout"] },
+            "description": "Revoke the current access token."
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{base_url}}/auth/refresh-token", "host": ["{{base_url}}"], "path": ["auth", "refresh-token"] },
+            "description": "Refresh the current access token."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/profile", "host": ["{{base_url}}"], "path": ["profile"] },
+            "description": "Get the authenticated user's profile."
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/profile", "host": ["{{base_url}}"], "path": ["profile"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Updated\",\n  \"email\": \"john.updated@example.com\"\n}"
+            },
+            "description": "Update the authenticated user's profile."
+          }
+        },
+        {
+          "name": "Update FCM Token",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/profile/update-fcm-token", "host": ["{{base_url}}"], "path": ["profile", "update-fcm-token"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fcm_token\": \"fcm_device_token_here\"\n}"
+            },
+            "description": "Update the device FCM token for push notifications."
+          }
+        },
+        {
+          "name": "List Addresses",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/addresses", "host": ["{{base_url}}"], "path": ["addresses"] },
+            "description": "List all saved addresses for the authenticated user."
+          }
+        },
+        {
+          "name": "Add Address",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/addresses", "host": ["{{base_url}}"], "path": ["addresses"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"Home\",\n  \"address_line\": \"123 Main St\",\n  \"city\": \"Cairo\",\n  \"latitude\": 30.0444,\n  \"longitude\": 31.2357,\n  \"is_default\": true\n}"
+            },
+            "description": "Add a new delivery address."
+          }
+        },
+        {
+          "name": "Update Address",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/addresses/1", "host": ["{{base_url}}"], "path": ["addresses", "1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"Work\",\n  \"address_line\": \"456 Office Blvd\",\n  \"city\": \"Cairo\"\n}"
+            },
+            "description": "Update an existing address."
+          }
+        },
+        {
+          "name": "Delete Address",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/addresses/1", "host": ["{{base_url}}"], "path": ["addresses", "1"] },
+            "description": "Delete a saved address."
+          }
+        },
+        {
+          "name": "Set Default Address",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/addresses/1/set-default", "host": ["{{base_url}}"], "path": ["addresses", "1", "set-default"] },
+            "description": "Set an address as the default delivery address."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "List Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products?page=1&per_page=15&search=burger",
+              "host": ["{{base_url}}"],
+              "path": ["products"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "per_page", "value": "15" },
+                { "key": "search", "value": "burger" }
+              ]
+            },
+            "description": "List all available products with optional search and pagination."
+          }
+        },
+        {
+          "name": "Get Product",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/products/1", "host": ["{{base_url}}"], "path": ["products", "1"] },
+            "description": "Get a single product by ID including options."
+          }
+        },
+        {
+          "name": "Get Product Reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/products/1/reviews", "host": ["{{base_url}}"], "path": ["products", "1", "reviews"] },
+            "description": "Get reviews for a specific product."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "List Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/categories", "host": ["{{base_url}}"], "path": ["categories"] },
+            "description": "List all active product categories."
+          }
+        },
+        {
+          "name": "Products by Category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/categories/1/products", "host": ["{{base_url}}"], "path": ["categories", "1", "products"] },
+            "description": "Get all products belonging to a specific category."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/orders", "host": ["{{base_url}}"], "path": ["orders"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"address_id\": 1,\n  \"payment_method\": \"cash\",\n  \"offer_code\": \"SAVE10\",\n  \"notes\": \"Extra napkins please\",\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 2,\n      \"options\": [\n        { \"option_item_id\": 3 }\n      ]\n    }\n  ]\n}"
+            },
+            "description": "Place a new order."
+          }
+        },
+        {
+          "name": "List Orders",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base_url}}/orders?page=1",
+              "host": ["{{base_url}}"],
+              "path": ["orders"],
+              "query": [{ "key": "page", "value": "1" }]
+            },
+            "description": "List all orders for the authenticated user."
+          }
+        },
+        {
+          "name": "Get Order",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/orders/1", "host": ["{{base_url}}"], "path": ["orders", "1"] },
+            "description": "Get details of a specific order."
+          }
+        },
+        {
+          "name": "Cancel Order",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/orders/1/cancel", "host": ["{{base_url}}"], "path": ["orders", "1", "cancel"] },
+            "description": "Cancel a pending order."
+          }
+        },
+        {
+          "name": "Reorder",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/orders/1/reorder", "host": ["{{base_url}}"], "path": ["orders", "1", "reorder"] },
+            "description": "Repeat a previous order."
+          }
+        },
+        {
+          "name": "Track Order",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/orders/1/track", "host": ["{{base_url}}"], "path": ["orders", "1", "track"] },
+            "description": "Get real-time tracking info for an order."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Offers",
+      "item": [
+        {
+          "name": "Validate Offer Code",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/offers/validate-code", "host": ["{{base_url}}"], "path": ["offers", "validate-code"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"SAVE10\",\n  \"cart_total\": 150.00\n}"
+            },
+            "description": "Validate a promo/offer code and get discount details."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Initiate Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/payments/initiate", "host": ["{{base_url}}"], "path": ["payments", "initiate"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_id\": 1\n}"
+            },
+            "description": "Initiate an online payment for an order via Kashier."
+          }
+        },
+        {
+          "name": "Kashier Webhook",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/payments/kashier-webhook", "host": ["{{base_url}}"], "path": ["payments", "kashier-webhook"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"ORDER-1\",\n  \"status\": \"SUCCESS\",\n  \"transactionId\": \"TXN123\",\n  \"signature\": \"abc123\"\n}"
+            },
+            "description": "Webhook endpoint called by Kashier payment gateway (no auth required)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "List Notifications",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/notifications", "host": ["{{base_url}}"], "path": ["notifications"] },
+            "description": "List all notifications for the authenticated user."
+          }
+        },
+        {
+          "name": "Unread Count",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/notifications/unread-count", "host": ["{{base_url}}"], "path": ["notifications", "unread-count"] },
+            "description": "Get the count of unread notifications."
+          }
+        },
+        {
+          "name": "Mark Notification Read",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/notifications/1/read", "host": ["{{base_url}}"], "path": ["notifications", "1", "read"] },
+            "description": "Mark a single notification as read."
+          }
+        },
+        {
+          "name": "Mark All Read",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/notifications/read-all", "host": ["{{base_url}}"], "path": ["notifications", "read-all"] },
+            "description": "Mark all notifications as read."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Favorites",
+      "item": [
+        {
+          "name": "List Favorites",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/favorites", "host": ["{{base_url}}"], "path": ["favorites"] },
+            "description": "List all favorited products."
+          }
+        },
+        {
+          "name": "Add Favorite",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/favorites/1", "host": ["{{base_url}}"], "path": ["favorites", "1"] },
+            "description": "Add a product to favorites."
+          }
+        },
+        {
+          "name": "Remove Favorite",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/favorites/1", "host": ["{{base_url}}"], "path": ["favorites", "1"] },
+            "description": "Remove a product from favorites."
+          }
+        },
+        {
+          "name": "Toggle Favorite",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/favorites/1/toggle", "host": ["{{base_url}}"], "path": ["favorites", "1", "toggle"] },
+            "description": "Toggle a product's favorite status."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "Create Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/reviews", "host": ["{{base_url}}"], "path": ["reviews"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_id\": 1,\n  \"order_id\": 1,\n  \"rating\": 5,\n  \"comment\": \"Delicious! Will order again.\"\n}"
+            },
+            "description": "Submit a review for a product from a completed order."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Dashboard",
+      "item": [
+        {
+          "name": "Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/admin/dashboard", "host": ["{{base_url}}"], "path": ["admin", "dashboard"] },
+            "description": "Get admin dashboard statistics (orders, revenue, customers)."
+          }
+        },
+        {
+          "name": "Revenue Analytics",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base_url}}/admin/analytics/revenue?period=monthly",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "analytics", "revenue"],
+              "query": [{ "key": "period", "value": "monthly" }]
+            },
+            "description": "Get revenue analytics data."
+          }
+        },
+        {
+          "name": "Order Heatmap",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/admin/analytics/heatmap", "host": ["{{base_url}}"], "path": ["admin", "analytics", "heatmap"] },
+            "description": "Get order heatmap data by time/day."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Orders",
+      "item": [
+        {
+          "name": "List Orders",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base_url}}/admin/orders?status=pending&page=1",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "orders"],
+              "query": [
+                { "key": "status", "value": "pending" },
+                { "key": "page", "value": "1" }
+              ]
+            },
+            "description": "List all orders with optional status filter."
+          }
+        },
+        {
+          "name": "Get Order",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/admin/orders/1", "host": ["{{base_url}}"], "path": ["admin", "orders", "1"] },
+            "description": "Get full details of a specific order."
+          }
+        },
+        {
+          "name": "Update Order Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/orders/1/status", "host": ["{{base_url}}"], "path": ["admin", "orders", "1", "status"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"preparing\"\n}"
+            },
+            "description": "Update the status of an order (pending, confirmed, preparing, out_for_delivery, delivered, cancelled)."
+          }
+        },
+        {
+          "name": "Assign Driver",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/orders/1/assign-driver", "host": ["{{base_url}}"], "path": ["admin", "orders", "1", "assign-driver"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"driver_id\": 5\n}"
+            },
+            "description": "Assign a driver to an order."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Products",
+      "item": [
+        {
+          "name": "List Products",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/admin/products", "host": ["{{base_url}}"], "path": ["admin", "products"] },
+            "description": "List all products (admin view, includes inactive)."
+          }
+        },
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/products", "host": ["{{base_url}}"], "path": ["admin", "products"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Classic Burger\",\n  \"description\": \"Juicy beef patty with fresh toppings\",\n  \"price\": 89.99,\n  \"category_id\": 1,\n  \"is_active\": true,\n  \"options\": []\n}"
+            },
+            "description": "Create a new product."
+          }
+        },
+        {
+          "name": "Update Product",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/products/1", "host": ["{{base_url}}"], "path": ["admin", "products", "1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 99.99,\n  \"is_active\": true\n}"
+            },
+            "description": "Update an existing product."
+          }
+        },
+        {
+          "name": "Delete Product",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/admin/products/1", "host": ["{{base_url}}"], "path": ["admin", "products", "1"] },
+            "description": "Delete a product."
+          }
+        },
+        {
+          "name": "Upload Product Images",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/admin/products/1/images", "host": ["{{base_url}}"], "path": ["admin", "products", "1", "images"] },
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "images[]", "type": "file", "src": "" }]
+            },
+            "description": "Upload images for a product (multipart/form-data)."
+          }
+        },
+        {
+          "name": "Bulk Toggle Products",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/products/bulk-toggle", "host": ["{{base_url}}"], "path": ["admin", "products", "bulk-toggle"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ids\": [1, 2, 3],\n  \"is_active\": false\n}"
+            },
+            "description": "Toggle active status for multiple products at once."
+          }
+        },
+        {
+          "name": "Import Products (CSV)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/admin/products/import", "host": ["{{base_url}}"], "path": ["admin", "products", "import"] },
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "file", "type": "file", "src": "" }]
+            },
+            "description": "Import products from a CSV file."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Categories",
+      "item": [
+        {
+          "name": "List Categories",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/admin/categories", "host": ["{{base_url}}"], "path": ["admin", "categories"] },
+            "description": "List all categories."
+          }
+        },
+        {
+          "name": "Create Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/categories", "host": ["{{base_url}}"], "path": ["admin", "categories"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Burgers\",\n  \"description\": \"All burger varieties\",\n  \"sort_order\": 1,\n  \"is_active\": true\n}"
+            },
+            "description": "Create a new product category."
+          }
+        },
+        {
+          "name": "Update Category",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/categories/1", "host": ["{{base_url}}"], "path": ["admin", "categories", "1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Burgers & Sandwiches\"\n}"
+            },
+            "description": "Update a category."
+          }
+        },
+        {
+          "name": "Delete Category",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/admin/categories/1", "host": ["{{base_url}}"], "path": ["admin", "categories", "1"] },
+            "description": "Delete a category."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Customers",
+      "item": [
+        {
+          "name": "List Customers",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base_url}}/admin/customers?page=1",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "customers"],
+              "query": [{ "key": "page", "value": "1" }]
+            },
+            "description": "List all customers."
+          }
+        },
+        {
+          "name": "Get Customer",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/admin/customers/1", "host": ["{{base_url}}"], "path": ["admin", "customers", "1"] },
+            "description": "Get a customer's details and order history."
+          }
+        },
+        {
+          "name": "Block / Unblock Customer",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/admin/customers/1/toggle-status", "host": ["{{base_url}}"], "path": ["admin", "customers", "1", "toggle-status"] },
+            "description": "Toggle a customer's active/blocked status."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Drivers",
+      "item": [
+        {
+          "name": "List Drivers",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/admin/drivers", "host": ["{{base_url}}"], "path": ["admin", "drivers"] },
+            "description": "List all delivery drivers."
+          }
+        },
+        {
+          "name": "Create Driver",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/drivers", "host": ["{{base_url}}"], "path": ["admin", "drivers"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ahmed Hassan\",\n  \"phone\": \"+201009876543\",\n  \"vehicle_type\": \"motorcycle\"\n}"
+            },
+            "description": "Add a new delivery driver."
+          }
+        },
+        {
+          "name": "Update Driver",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/drivers/1", "host": ["{{base_url}}"], "path": ["admin", "drivers", "1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_active\": false\n}"
+            },
+            "description": "Update driver details."
+          }
+        },
+        {
+          "name": "Delete Driver",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/admin/drivers/1", "host": ["{{base_url}}"], "path": ["admin", "drivers", "1"] },
+            "description": "Remove a driver."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Offers",
+      "item": [
+        {
+          "name": "List Offers",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/admin/offers", "host": ["{{base_url}}"], "path": ["admin", "offers"] },
+            "description": "List all promo offers/codes."
+          }
+        },
+        {
+          "name": "Create Offer",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/offers", "host": ["{{base_url}}"], "path": ["admin", "offers"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"SAVE10\",\n  \"type\": \"percentage\",\n  \"value\": 10,\n  \"min_order_amount\": 100,\n  \"max_uses\": 500,\n  \"expires_at\": \"2025-12-31\",\n  \"is_active\": true\n}"
+            },
+            "description": "Create a new promo offer."
+          }
+        },
+        {
+          "name": "Update Offer",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/offers/1", "host": ["{{base_url}}"], "path": ["admin", "offers", "1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_active\": false\n}"
+            },
+            "description": "Update an offer."
+          }
+        },
+        {
+          "name": "Delete Offer",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/admin/offers/1", "host": ["{{base_url}}"], "path": ["admin", "offers", "1"] },
+            "description": "Delete an offer."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Banners",
+      "item": [
+        {
+          "name": "List Banners",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/admin/banners", "host": ["{{base_url}}"], "path": ["admin", "banners"] },
+            "description": "List all promotional banners."
+          }
+        },
+        {
+          "name": "Create Banner",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/admin/banners", "host": ["{{base_url}}"], "path": ["admin", "banners"] },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "title", "value": "Summer Sale", "type": "text" },
+                { "key": "link", "value": "https://example.com/sale", "type": "text" },
+                { "key": "sort_order", "value": "1", "type": "text" },
+                { "key": "is_active", "value": "1", "type": "text" },
+                { "key": "image", "type": "file", "src": "" }
+              ]
+            },
+            "description": "Create a new banner (multipart/form-data with image upload)."
+          }
+        },
+        {
+          "name": "Update Banner",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/banners/1", "host": ["{{base_url}}"], "path": ["admin", "banners", "1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Winter Sale\",\n  \"is_active\": true\n}"
+            },
+            "description": "Update a banner."
+          }
+        },
+        {
+          "name": "Delete Banner",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/admin/banners/1", "host": ["{{base_url}}"], "path": ["admin", "banners", "1"] },
+            "description": "Delete a banner."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Notifications",
+      "item": [
+        {
+          "name": "Broadcast Notification",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/notifications/broadcast", "host": ["{{base_url}}"], "path": ["admin", "notifications", "broadcast"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Special Offer!\",\n  \"body\": \"Get 20% off all orders today only.\",\n  \"target\": \"all\"\n}"
+            },
+            "description": "Broadcast a push notification to all or specific users."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Settings",
+      "item": [
+        {
+          "name": "Get Settings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/admin/settings", "host": ["{{base_url}}"], "path": ["admin", "settings"] },
+            "description": "Get all tenant settings."
+          }
+        },
+        {
+          "name": "Batch Update Settings",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/admin/settings/batch-update", "host": ["{{base_url}}"], "path": ["admin", "settings", "batch-update"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"settings\": [\n    { \"key\": \"restaurant_name\", \"value\": \"My Restaurant\" },\n    { \"key\": \"delivery_fee\", \"value\": \"15\" },\n    { \"key\": \"min_order_amount\", \"value\": \"50\" }\n  ]\n}"
+            },
+            "description": "Update multiple settings at once."
+          }
+        },
+        {
+          "name": "Upload Settings Image",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/admin/settings/upload-image", "host": ["{{base_url}}"], "path": ["admin", "settings", "upload-image"] },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "key", "value": "logo", "type": "text" },
+                { "key": "image", "type": "file", "src": "" }
+              ]
+            },
+            "description": "Upload an image for a settings key (e.g., logo, cover)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Central - Tenants",
+      "item": [
+        {
+          "name": "List Tenants",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{central_url}}/tenants", "host": ["{{central_url}}"], "path": ["tenants"] },
+            "description": "List all tenants on the platform (super admin only)."
+          }
+        },
+        {
+          "name": "Create Tenant",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{central_url}}/tenants", "host": ["{{central_url}}"], "path": ["tenants"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Pizza Palace\",\n  \"subdomain\": \"pizza\",\n  \"email\": \"owner@pizzapalace.com\",\n  \"plan_id\": 1\n}"
+            },
+            "description": "Provision a new tenant."
+          }
+        },
+        {
+          "name": "Suspend Tenant",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{central_url}}/tenants/1/suspend", "host": ["{{central_url}}"], "path": ["tenants", "1", "suspend"] },
+            "description": "Suspend a tenant's access."
+          }
+        },
+        {
+          "name": "Delete Tenant",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{central_url}}/tenants/1", "host": ["{{central_url}}"], "path": ["tenants", "1"] },
+            "description": "Permanently delete a tenant and all their data."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Central - Plans",
+      "item": [
+        {
+          "name": "List Plans",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{central_url}}/plans", "host": ["{{central_url}}"], "path": ["plans"] },
+            "description": "List all subscription plans."
+          }
+        },
+        {
+          "name": "Create Plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{central_url}}/plans", "host": ["{{central_url}}"], "path": ["plans"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Pro\",\n  \"price\": 299.00,\n  \"billing_cycle\": \"monthly\",\n  \"features\": {\n    \"max_products\": 500,\n    \"max_orders_per_month\": 10000\n  }\n}"
+            },
+            "description": "Create a new subscription plan."
+          }
+        },
+        {
+          "name": "Update Plan",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{central_url}}/plans/1", "host": ["{{central_url}}"], "path": ["plans", "1"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 349.00\n}"
+            },
+            "description": "Update a subscription plan."
+          }
+        },
+        {
+          "name": "Delete Plan",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{central_url}}/plans/1", "host": ["{{central_url}}"], "path": ["plans", "1"] },
+            "description": "Delete a subscription plan."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Central - Dashboard",
+      "item": [
+        {
+          "name": "Super Admin Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{central_url}}/dashboard", "host": ["{{central_url}}"], "path": ["dashboard"] },
+            "description": "Get platform-wide stats: total tenants, revenue, active subscriptions."
+          }
+        }
+      ]
+    }
+  ]
+}

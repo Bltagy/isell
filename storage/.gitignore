@@ -1,0 +1,7 @@
+# Ignore all data but keep directory structure
+mysql/*
+!mysql/.gitkeep
+minio/*
+!minio/.gitkeep
+app/public/*
+!app/public/.gitkeep

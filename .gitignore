@@ -1,0 +1,39 @@
+# ─── Environment ────────────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ─── macOS ──────────────────────────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ─── IDE ────────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ─── Docker volumes / runtime data ──────────────────────────────────────────
+docker/mysql/data/
+docker/.DS_Store
+
+# ─── Storage (DB dumps & uploaded data) ─────────────────────────────────────
+storage/mysql/
+storage/minio/
+storage/app/public/
+storage/*.sql
+storage/mysql_backup*.sql
+
+# ─── Logs ───────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ─── OS ─────────────────────────────────────────────────────────────────────
+Thumbs.db
+
+# ─── Design / binary assets not needed in repo ──────────────────────────────
+*.psd
+
+# ─── Kiro IDE ────────────────────────────────────────────────────────────────
+.kiro/
