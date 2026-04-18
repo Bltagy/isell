@@ -99,6 +99,7 @@ fi
 # ── 4. Bundle everything into a single tarball ────────────────────────────────
 log "Creating final archive: ${BACKUP_NAME}.tar.gz ..."
 tar -czf "$BACKUP_DIR/${BACKUP_NAME}.tar.gz" \
+  --exclude="._*" \
   -C "$BACKUP_DIR" "$BACKUP_NAME"
 rm -rf "$BACKUP_PATH"
 log "Archive ready: $BACKUP_DIR/${BACKUP_NAME}.tar.gz"

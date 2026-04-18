@@ -70,7 +70,8 @@ done
 log "MySQL is ready."
 
 # ── 3. Restore MySQL databases ────────────────────────────────────────────────
-SQL_FILES=$(find "$BACKUP_CONTENT" -name "*.sql" 2>/dev/null || true)
+# Exclude macOS metadata files (._*) and only pick real .sql files
+SQL_FILES=$(find "$BACKUP_CONTENT" -name "*.sql" ! -name "._*" 2>/dev/null || true)
 
 if [ -z "$SQL_FILES" ]; then
   log "  (no SQL files found — skipping DB restore)"
@@ -78,10 +79,13 @@ else
   for SQL_FILE in $SQL_FILES; do
     DB_NAME=$(basename "$SQL_FILE" .sql)
     log "  → Restoring $DB_NAME ..."
-    docker exec -i "$MYSQL_CONTAINER" \
+    if docker exec -i "$MYSQL_CONTAINER" \
       mysql -uroot -p"$DB_ROOT_PASSWORD" \
-      < "$SQL_FILE" 2>/dev/null
-    log "    $DB_NAME restored."
+      < "$SQL_FILE" 2>/dev/null; then
+      log "    $DB_NAME restored."
+    else
+      log "    WARNING: failed to restore $DB_NAME — skipping."
+    fi
   done
   log "MySQL restore complete."
 fi
