@@ -23,7 +23,7 @@ class _HiveKeys {
 /// - iOS simulator: http://localhost:8055
 const String kDefaultBaseUrl = String.fromEnvironment(
   'BASE_URL',
-  defaultValue: 'http://192.168.1.10:8055',
+  defaultValue: 'https://isell.dev-ark.com',
 );
 
 /// Keys used in flutter_secure_storage.

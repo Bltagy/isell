@@ -216,7 +216,7 @@ services:
     ports:
       - "3001:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=http://${HOST_IP:-localhost}:8055
+      - NEXT_PUBLIC_API_URL=https://${HOST_IP:-localhost}
       - NEXT_PUBLIC_REVERB_APP_KEY=foodapp-key
       - NEXT_PUBLIC_REVERB_HOST=${HOST_IP:-localhost}
       - NEXT_PUBLIC_REVERB_PORT=8060

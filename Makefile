@@ -97,3 +97,16 @@ flutter-apk:
 
 flutter-ios:
 	cd mobile && flutter run -d ios --dart-define=BASE_URL=$(FLUTTER_BASE_URL)
+
+## ── Backup & Restore ─────────────────────────────────────────────────────────
+# Backup locally:              make backup
+# Backup + push to remote:     make backup REMOTE=root@isell.dev-ark.com
+# Restore on remote (run there): make restore FILE=backups/foodapp_backup_XYZ.tar.gz
+
+REMOTE ?=
+
+backup:
+	./scripts/backup.sh $(REMOTE)
+
+restore:
+	./scripts/restore.sh $(FILE)

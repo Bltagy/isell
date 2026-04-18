@@ -25,6 +25,10 @@ storage/app/public/
 storage/*.sql
 storage/mysql_backup*.sql
 
+# ─── Backups ─────────────────────────────────────────────────────────────────
+backups/*.tar.gz
+backups/*.sql
+
 # ─── Logs ───────────────────────────────────────────────────────────────────
 *.log
 logs/
