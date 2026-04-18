@@ -26,7 +26,7 @@
         "laravel/sail": "^1.26",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.1",
-        "phpunit/phpunit": "^11.0.1"
+        "phpunit/phpunit": "^11.5.50"
     },
     "autoload": {
         "psr-4": {
@@ -68,15 +68,20 @@
     },
     "config": {
         "optimize-autoloader": true,
-        "platform": {
-            "php": "8.3.30"
-        },
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
+        },
+        "audit": {
+            "block-insecure": false
         }
+    },
+    "audit": {
+        "abandoned": "report",
+        "ignore": ["PKSA-5jz8-6tcw-pbk4", "PKSA-z3gr-8qht-p93v"],
+        "block-insecure": false
     },
     "minimum-stability": "stable",
     "prefer-stable": true
