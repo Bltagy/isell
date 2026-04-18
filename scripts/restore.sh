@@ -112,10 +112,27 @@ else
   log "  (storage_minio.tar.gz not found — skipping)"
 fi
 
+# ── 5b. Fix storage permissions (restore runs as root, container runs as www) ─
+log "Fixing storage permissions..."
+docker compose exec -u root -T laravel-app chown -R www:www /var/www/html/storage
+docker compose exec -u root -T laravel-app chown -R www:www /var/www/html/bootstrap/cache
+docker compose exec -u root -T laravel-app chmod -R 775 /var/www/html/storage
+docker compose exec -u root -T laravel-app chmod -R 775 /var/www/html/bootstrap/cache
+log "Permissions fixed."
+
 # ── 6. Run migrations (safe — skips already-run ones) ────────────────────────
 log "Running migrations..."
 docker compose exec -T laravel-app php artisan migrate --force 2>/dev/null || true
 docker compose exec -T laravel-app php artisan tenants:migrate --force 2>/dev/null || true
+
+# Fix telescope migration record if table exists but record is missing
+docker compose exec -T laravel-app php artisan tinker --execute="
+  \$m = '2026_04_12_132351_create_telescope_entries_table';
+  if (Schema::hasTable('telescope_entries') && !DB::table('migrations')->where('migration', \$m)->exists()) {
+    DB::table('migrations')->insert(['migration' => \$m, 'batch' => 99]);
+    echo 'telescope migration record inserted';
+  }
+" 2>/dev/null || true
 
 # ── 7. Clear caches ───────────────────────────────────────────────────────────
 log "Clearing application caches..."
