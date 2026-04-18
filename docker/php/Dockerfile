@@ -50,11 +50,8 @@ RUN groupadd -g 1000 www && useradd -u 1000 -ms /bin/bash -g www www
 # Copy ALL application files first (artisan must exist before composer scripts run)
 COPY backend/ .
 
-# Remove stale lock file so composer update regenerates it for PHP 8.3
-RUN rm -f composer.lock
-
-# Install / update dependencies
-RUN composer update --no-interaction --prefer-dist --optimize-autoloader
+# Install dependencies using the committed lock file (fast, deterministic)
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
 # Set permissions
 RUN chown -R www:www /var/www/html \
