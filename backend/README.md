@@ -81,7 +81,7 @@ http://demo.localhost/api/v1/auth/login
 | Service | Port | URL |
 |---|---|---|
 | Nginx (API) | 80 | http://localhost |
-| Laravel Reverb (WS) | 8080 | ws://localhost:8080 |
+| Laravel Reverb (WS) | 8060 | ws://localhost:8060 |
 | MySQL | 3306 | localhost:3306 |
 | Redis | 6379 | localhost:6379 |
 | Meilisearch | 7700 | http://localhost:7700 |

@@ -37,7 +37,7 @@ export function useRealtime(tenantId?: string | number) {
 
         const reverbKey  = runtimeEnv("NEXT_PUBLIC_REVERB_APP_KEY", "foodapp-key");
         const reverbHost = runtimeEnv("NEXT_PUBLIC_REVERB_HOST", "localhost");
-        const reverbPort = Number(runtimeEnv("NEXT_PUBLIC_REVERB_PORT", "8080"));
+        const reverbPort = Number(runtimeEnv("NEXT_PUBLIC_REVERB_PORT", "8060"));
         const apiUrl     = runtimeEnv("NEXT_PUBLIC_API_URL", "http://localhost");
 
         echo = new Echo({

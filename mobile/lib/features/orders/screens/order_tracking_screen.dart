@@ -71,9 +71,9 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
   void _connectWebSocket() {
     try {
       final baseUrl = StorageService().getBaseUrl();
-      // Convert http://host to ws://host:8080
-      final wsHost = Uri.parse(baseUrl).host;
-      final wsUrl = 'ws://$wsHost:8080/app/foodapp-key'
+      // Convert http://host to ws://host:8060
+      const wsHost = Uri.parse(baseUrl).host;
+      final wsUrl = 'ws://$wsHost:8060/app/foodapp-key'
           '?protocol=7&client=flutter&version=1.0';
 
       _channel = WebSocketChannel.connect(Uri.parse(wsUrl));
