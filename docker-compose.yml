@@ -16,7 +16,7 @@ services:
     restart: unless-stopped
     ports:
       - "8055:80"
-      - "443:443"
+      - "445:443"
     environment:
       - HOST_IP=${HOST_IP:-localhost}
     volumes:
