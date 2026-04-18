@@ -47,6 +47,22 @@ class StorageService {
       Hive.openBox<dynamic>(HiveBoxes.onboarding),
       Hive.openBox<dynamic>(HiveBoxes.appConfig),
     ]);
+
+    // Reset base_url if it points to a local/private IP (leftover from dev).
+    final box = Hive.box<dynamic>(HiveBoxes.appConfig);
+    final stored = box.get(_HiveKeys.baseUrl) as String?;
+    if (stored != null && _isLocalUrl(stored)) {
+      await box.delete(_HiveKeys.baseUrl);
+    }
+  }
+
+  static bool _isLocalUrl(String url) {
+    final host = Uri.tryParse(url)?.host ?? '';
+    return host == 'localhost' ||
+        host.startsWith('192.168.') ||
+        host.startsWith('10.') ||
+        host.startsWith('172.') ||
+        host == '127.0.0.1';
   }
 
   // ── Auth token (secure storage) ─────────────────────────────────────────────

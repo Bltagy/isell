@@ -227,13 +227,13 @@ class _HomeHeader extends StatelessWidget {
                           isAuth
                               ? l.helloUser(userName.split(' ').first)
                               : l.helloGuest,
-                          style: const TextStyle(
-                              color: Color(0xD9FFFFFF), fontSize: 13),
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: const Color(0xD9FFFFFF), fontSize: 13),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           l.whatToEat,
-                          style: const TextStyle(
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
                               color: Colors.white,
                               fontSize: 20,
                               fontWeight: FontWeight.w800,
@@ -280,7 +280,7 @@ class _HomeHeader extends StatelessWidget {
                           color: AppColors.textHint, size: 22),
                       const SizedBox(width: 10),
                       Text(l.searchFood,
-                          style: const TextStyle(
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: AppColors.textHint, fontSize: 14)),
                       const Spacer(),
                       Container(
@@ -412,7 +412,7 @@ class _BannerCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6)),
                     child: Text(
                       AppLocalizations.of(context).specialOffer,
-                      style: const TextStyle(
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: Colors.white,
                           fontSize: 10,
                           fontWeight: FontWeight.w600),
@@ -420,7 +420,7 @@ class _BannerCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(title,
-                      style: const TextStyle(
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           color: Colors.white,
                           fontSize: 17,
                           fontWeight: FontWeight.w700,
@@ -579,7 +579,7 @@ class _ProductCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(6)),
                         child: Text(
                           '-${(((price - discountPrice) / price) * 100).round()}%',
-                          style: const TextStyle(
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
                               color: Colors.white,
                               fontSize: 10,
                               fontWeight: FontWeight.w700),
@@ -603,8 +603,8 @@ class _ProductCard extends StatelessWidget {
                     children: [
                       const Icon(Icons.star_rounded,
                           color: AppColors.star, size: 14),
-                      const Text(' 4.5',
-                          style: TextStyle(
+                      Text(' 4.5',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                               color: AppColors.textSecondary)),
@@ -612,7 +612,7 @@ class _ProductCard extends StatelessWidget {
                       const Icon(Icons.access_time_rounded,
                           size: 12, color: AppColors.textHint),
                       Text(' ${prepTime}m',
-                          style: const TextStyle(
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               fontSize: 11, color: AppColors.textHint)),
                     ],
                   ),
@@ -626,14 +626,14 @@ class _ProductCard extends StatelessWidget {
                           if (discountPrice != null)
                             Text(
                               'EGP ${(price / 100).toStringAsFixed(2)}',
-                              style: const TextStyle(
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                   fontSize: 10,
                                   color: AppColors.textHint,
                                   decoration: TextDecoration.lineThrough),
                             ),
                           Text(
                             'EGP ${((discountPrice ?? price) / 100).toStringAsFixed(2)}',
-                            style: const TextStyle(
+                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
                                 color: AppColors.primary),

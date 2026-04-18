@@ -72,7 +72,7 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
     try {
       final baseUrl = StorageService().getBaseUrl();
       // Convert http://host to ws://host:8060
-      const wsHost = Uri.parse(baseUrl).host;
+      final wsHost = Uri.parse(baseUrl).host;
       final wsUrl = 'ws://$wsHost:8060/app/foodapp-key'
           '?protocol=7&client=flutter&version=1.0';
 
